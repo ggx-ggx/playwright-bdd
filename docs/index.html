@@ -2,22 +2,33 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Playwright-bdd documentation</title>
+    <title>Playwright-BDD documentation</title>
+    <link rel="icon" type="image/svg+xml" href="logo.svg" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <meta name="description" content="Description" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0" />
     <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify@4/lib/themes/vue.css" />
+    <link
+      rel="stylesheet"
+      href="//cdn.jsdelivr.net/npm/docsify-top-banner-plugin@latest/dist/style.css"
+    />
   </head>
   <body>
     <div id="app"></div>
     <script>
       window.$docsify = {
-        name: 'playwright-bdd',
+        name: '<img src="logo.svg" width="32" height="32" style="vertical-align: bottom; margin-right: 4px"/>Playwright-BDD',
         repo: 'vitalets/playwright-bdd',
         homepage: 'index.md',
         auto2top: true,
         loadSidebar: true,
         subMaxLevel: 3,
+        topBanner: {
+          position: 'relative',
+          zIndex: '-1',
+          // useful emoji - :bulb: :fire:
+          content: `:bulb: Try out [Fix with AI](guides/fix-with-ai) button in HTML reporters`,
+        },
         // There is paths inconsistency problem in docsify:
         // https://github.com/docsifyjs/docsify/issues/1891
         relativePath: false,
@@ -42,8 +53,10 @@
     <script src="//unpkg.com/docsify-pagination/dist/docsify-pagination.min.js"></script>
     <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-typescript.min.js"></script>
     <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-gherkin.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-yaml.min.js"></script>
     <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-diff.min.js"></script>
     <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/search.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/docsify-top-banner-plugin@latest/dist/index.js"></script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-KFTCRSQYLJ"></script>
     <script>

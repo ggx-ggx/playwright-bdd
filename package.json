@@ -1,0 +1,34 @@
+{
+  "name": "example-test",
+  "version": "1.0.0",
+  "description": "BDD Tests with Serenity-JS",
+  "config": {
+    "formatter": "@serenity-js/cucumber"
+  },
+  "scripts": {
+    "test": "cucumber-js",
+    "test:full": "cucumber-js --format @serenity-js/cucumber",
+    "test:full:formatted": "cucumber-js --format ./src/support/CustomFormatter.js --format-options \"{\\\"errorOnMissingSteps\\\": true}\" --fail-fast --strict",
+    "postinstall": "serenity-bdd update",
+    "clean": "rimraf target",
+    "test:smoke-prod": "cucumber-js --tags \"@smoke and @prod-ready\" --format $npm_package_config_formatter",
+    "test:prod-sanity": "cucumber-js --tags \"@prod-ready and @critical and not (@flaky or @performance or @negative)\" --format $npm_package_config_formatter",
+    "test:dev-all": "cucumber-js --tags \"not @prod-ready\" --format $npm_package_config_formatter"
+  },
+  "dependencies": {
+    "@cucumber/cucumber": "^11.2.0",
+    "@serenity-js/console-reporter": "^3.31.13",
+    "@serenity-js/core": "^3.0.0",
+    "@serenity-js/cucumber": "^3.0.0",
+    "@serenity-js/rest": "^3.0.0",
+    "@serenity-js/serenity-bdd": "^3.31.13",
+    "axios": "^1.0.0",
+    "chalk": "^4.1.2",
+    "expect": "^29.0.0",
+    "ts-node": "^10.0.0",
+    "typescript": "^4.5.0"
+  },
+  "devDependencies": {
+    "rimraf": "^6.0.1"
+  }
+}

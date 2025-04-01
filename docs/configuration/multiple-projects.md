@@ -1,15 +1,16 @@
 # Multiple projects
-You can use `playwright-bdd` with multiple [Playwright projects](https://playwright.dev/docs/test-projects). 
+You can use Playwright-BDD with multiple [Playwright projects](https://playwright.dev/docs/test-projects). 
 
-If all projects use **the same feature files**, you can re-use `testDir` from single `defineBddConfig()`:
+## Same feature files
+
+If all projects use **the same set of feature files**, you can define a single `testDir` option at the root level of the config:
 ```ts
 import { defineConfig, devices } from '@playwright/test';
 import { defineBddConfig } from 'playwright-bdd';
 
 const testDir = defineBddConfig({
-  paths: ['feature/*.feature'],
-  require: ['steps/**/*.ts'],
-  importTestFrom: 'fixtures.ts',
+  features: 'feature/*.feature',
+  steps: 'steps/**/*.ts',
 });
 
 export default defineConfig({
@@ -27,10 +28,9 @@ export default defineConfig({
 });
 ```
 
-If projects use **different feature files**, you should use separate `defineBddConfig()` calls inside each project.
+## Different feature files
 
-> Please provide different `outputDir` for each project, otherwise generated files will overwrite each other
-
+If projects use **different feature files**, you should define a separate `testDir` for each project:
 ```ts
 import { defineConfig } from '@playwright/test';
 import { defineBddConfig } from 'playwright-bdd';
@@ -41,25 +41,25 @@ export default defineConfig({
       name: 'project-one',
       testDir: defineBddConfig({
         outputDir: '.features-gen/one',
-        importTestFrom: 'project-one/steps/fixtures.ts',
-        paths: ['project-one/*.feature'],
-        require: ['project-one/steps/*.ts'],
+        features: 'project-one/*.feature',
+        steps: 'project-one/steps/*.ts',
       }),
     },
     {
       name: 'project-two',
       testDir: defineBddConfig({
         outputDir: '.features-gen/two',
-        importTestFrom: 'project-two/steps/fixtures.ts',
-        paths: ['project-two/*.feature'],
-        require: ['project-two/steps/*.ts'],
+        features: 'project-two/*.feature',
+        steps: 'project-two/steps/*.ts',
       }),
     },
   ],
 });
 ```
 
-Since **playwright-bdd v7** there is new helper function [`defineBddProject()`](api.md#definebddprojectconfig) that automatically sets `outputDir` from project name:
+?> Please note that you should also set a unique `outputDir` for each project to avoid conflicts.
+
+For convenience, there is a helper function [`defineBddProject()`](api.md#definebddproject). In addition to the standard BDD config, it accepts a project name and automatically sets `outputDir` based on that name. The function returns an object `{ name, testDir }`, which can be merged into the project config with the spread operator.
 
 ```ts
 import { defineConfig } from '@playwright/test';
@@ -70,34 +70,36 @@ export default defineConfig({
     {
       ...defineBddProject({
         name: 'project-one',
-        importTestFrom: 'project-one/steps/fixtures.ts',
-        paths: ['project-one/*.feature'],
-        require: ['project-one/steps/*.ts'],
+        features: 'project-one/*.feature',
+        steps: 'project-one/steps/*.ts',
       }),
     },
     {
       ...defineBddProject({
         name: 'project-two',
-        importTestFrom: 'project-two/steps/fixtures.ts',
-        paths: ['project-two/*.feature'],
-        require: ['project-two/steps/*.ts'],
+        features: 'project-two/*.feature',
+        steps: 'project-two/steps/*.ts',
       }),
     },
   ],
 });
 ```
 
-#### Authentication project
+## Non-BDD projects
 
-When using [separate project for authentication](https://playwright.dev/docs/auth#basic-shared-account-in-all-tests), it is important to explicitly set `testDir` for it:
+You can have non-BDD projects in the same Playwright config. Just ensure that non-BDD projects have their own `testDir`. See the example in **Authentication** below. 
+
+## Authentication
+
+When using a separate non-BDD project [for authentication](https://playwright.dev/docs/auth#basic-shared-account-in-all-tests), it is important to explicitly set `testDir` for it:
 
 ```ts
 import { defineConfig } from '@playwright/test';
 import { defineBddConfig } from 'playwright-bdd';
 
 const testDir = defineBddConfig({
-  paths: ['features/*.feature'],
-  require: ['steps/*.ts'],
+  features: 'features/*.feature',
+  steps: 'steps/*.ts',
 });
 
 export default defineConfig({

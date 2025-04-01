@@ -2,16 +2,16 @@
 [ChatGPT](https://chat.openai.com) can write BDD scenarios for you!
 All you need is to describe a user story and provide step definitions.
 
-* For the user story you can just use general phrases defining the feature
-* For step definitions you can utilize [`bddgen export`](cli.md#bddgen-export) that prints list of all steps
+* For the user story, you can just use general phrases defining the feature
+* For step definitions, you can utilize [`bddgen export`](cli.md#bddgen-export) that prints a list of all steps
 
 **Example:**
 
-Imagine you have simple [Todo App](https://demo.playwright.dev/todomvc/#/) and want to cover it with BDD tests written by ChatGPT and executed by Playwright.
+Imagine you have a simple [Todo App](https://demo.playwright.dev/todomvc/#/) and want to cover it with BDD tests written by ChatGPT and executed by Playwright.
 
-First you need to write step definitions:
+First, you need to write step definitions:
 
-> We still write step definitions manually to get reliable locators, but in the future AI can generate them as well
+> We still write step definitions manually to get reliable locators, but in the future, AI can generate them as well
 
 ```ts
 import { createBdd } from 'playwright-bdd';
@@ -51,7 +51,7 @@ List of all steps found by config: playwright.config.ts
 
 And then use the following **ChatGPT prompt template**:
 ```
-Generate BDD scenarios for the following user story:
+Generate BDD scenarios in Gherkin for the following user story:
 
 {user story description}
 

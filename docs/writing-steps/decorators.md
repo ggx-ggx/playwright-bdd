@@ -1,6 +1,12 @@
 # Decorators
-Playwright-bdd supports [TypeScript v5 decorators](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-5-0.html#decorators) as a convenient way to define steps right inside [Page Object Models](https://playwright.dev/docs/pom). For example, you can create the following `TodoPage` class:
+Playwright-BDD supports [TypeScript v5 decorators](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-5-0.html#decorators) as a convenient way to define steps right inside [Page Object Models (POM)](https://playwright.dev/docs/pom). 
 
+Decorators are imported from `playwright-bdd/decorators`:
+```ts
+import { Fixture, Given, When, Then } from 'playwright-bdd/decorators';
+```
+
+Apply the `@Fixture` decorator to the whole class to bind it with the Playwright fixture name. Apply the `@Given, @When, @Then` decorators to particular methods:
 ```ts
 // TodoPage.ts
 import { Page, expect } from '@playwright/test';
@@ -38,11 +44,11 @@ export const test = base.extend<{ todoPage: TodoPage }>({
 });
 ```
 
-And set `importTestFrom` to `./fixtures.ts` in `playwright.config.ts`:
+And add `fixtures.ts` to steps in `playwright.config.ts`:
 ```ts
 const testDir = defineBddConfig({
-  importTestFrom: './fixtures.ts',
-  paths: ['features/todo.feature'],
+  features: 'features/todo.feature',
+  steps: 'fixtures.ts',
   // ...
 });
 ```
@@ -58,13 +64,13 @@ Feature: Todo Page
       And I add todo "bar"
       Then visible todos count is 2
 ```
-Check out [full example of using decorators](https://github.com/vitalets/playwright-bdd/tree/main/examples/decorators) with playwright-bdd.
+Check out the [full example of using decorators](https://github.com/vitalets/playwright-bdd/tree/main/examples/decorators) with playwright-bdd.
 
 > To get VSCode Cucumber autocomplete working with decorators set `cucumberautocomplete.strictGherkinCompletion = false` in `.vscode/settings.json`
 
 ## Inheritance
 When one Page Object is inherited from another, `playwright-bdd` can automatically guess
-what fixture to use in particular scenario. Imagine two parent-child classes with decorator steps:
+what fixture to use in a particular scenario. Imagine two parent-child classes with decorator steps:
 
 ```ts
 // TodoPage
@@ -80,7 +86,7 @@ export @Fixture('adminTodoPage') class AdminTodoPage extends TodoPage {
 }
 ```
 
-And scenario that uses both steps:
+And a scenario that uses both steps:
 
 ```gherkin
 Scenario: Adding todos
@@ -88,10 +94,10 @@ Scenario: Adding todos
   When I add todo "foo"   # <- step defined in AdminTodoPage
 ```
 
-Here `playwright-bdd` will use single fixture `AdminTodoPage` for both steps instead of creating two separate fixtures.
+Here Playwright-BDD will use a single fixture `AdminTodoPage` for both steps instead of creating two separate fixtures.
 
-In some cases you may want to force usage of particular fixture.
-For that you can apply special tag `@fixture:%name%`:
+In some cases, you may want to force the usage of a particular fixture.
+For that, you can apply the special tag `@fixture:%name%`:
 
 ```gherkin
 @fixture:adminTodoPage
@@ -103,6 +109,3 @@ Feature: Some feature
     Scenario: Adding todos
       When I add todo "foo"   # <- will use AdminTodoPage
 ```
-
-## Limitations
-* Currently [custom parameter types](https://github.com/cucumber/cucumber-expressions?tab=readme-ov-file#custom-parameter-types) are not supported in decorator steps. Vote and track [#112](https://github.com/vitalets/playwright-bdd/issues/112) for the progress on that.

@@ -1,21 +1,88 @@
 # Installation
 
-Install `playwright-bdd` from npm:
+You can install Playwright-BDD with different package managers:
 
-```
-npm i -D playwright-bdd
+- [with Npm](#npm)
+- [with Pnpm](#pnpm)
+- [with Yarn](#yarn)
+
+## Npm
+
+- **New project or existing project without Playwright:**
+
+    Install Playwright and Playwright-BDD:
+    ```
+    npm i -D @playwright/test playwright-bdd 
+    ```
+
+    Install Playwright [browsers](https://playwright.dev/docs/browsers):
+    ```
+    npx playwright install
+    ```
+
+- **Existing project with Playwright:**
+
+    Install only Playwright-BDD:
+    ```
+    npm i -D playwright-bdd 
+    ```
+
+Now you can start [writing BDD tests](getting-started/write-first-test.md).
+
+## Pnpm
+
+- **New project or existing project without Playwright:**
+
+    Install Playwright and Playwright-BDD:
+    ```
+    pnpm i -D @playwright/test playwright-bdd 
+    ```
+
+    Install Playwright [browsers](https://playwright.dev/docs/browsers):
+    ```
+    pnpm playwright install
+    ```
+
+- **Existing project with Playwright:**
+
+    Install only Playwright-BDD:
+    ```
+    pnpm i -D playwright-bdd 
+    ```
+
+Now you can start [writing BDD tests](getting-started/write-first-test.md).
+
+## Yarn
+
+**Important**: For [Yarn Plug'n'Play](https://yarnpkg.com/features/pnp) you need to add these lines to the `.yarnrc.yml`:
+
+```yml
+packageExtensions: 
+  playwright-bdd@*: 
+    dependencies: 
+      playwright: "*"
+      playwright-core: "*"
 ```
 
-This package uses `@playwright/test` and `@cucumber/cucumber` as a peer dependencies.
-For brand new projects they will be installed automatically with `playwright-bdd`.
-For existing projects you may need to update them to the latest versions:
+Then proceed with installing packages.
 
-```
-npm i -D @playwright/test@latest @cucumber/cucumber@latest
-```
+- **New project or existing project without Playwright:**
 
-After installing/updating major Playwright version you may need to [install browsers](https://playwright.dev/docs/browsers):
+    Install Playwright and Playwright-BDD:
+    ```
+    yarn add -D @playwright/test playwright-bdd 
+    ```
 
-```
-npx playwright install
-```
+    Install Playwright [browsers](https://playwright.dev/docs/browsers):
+    ```
+    yarn playwright install
+    ```
+
+- **Existing project with Playwright:**
+
+    Install only Playwright-BDD:
+    ```
+    yarn add -D playwright-bdd 
+    ```
+
+Now you can start [writing BDD tests](getting-started/write-first-test.md).
