@@ -11,6 +11,8 @@
     "test:full:formatted": "cucumber-js --format ./src/support/CustomFormatter.js --format-options \"{\\\"errorOnMissingSteps\\\": true}\" --fail-fast --strict",
     "postinstall": "serenity-bdd update",
     "clean": "rimraf target",
+    "clean:modules": "rimraf node_modules package-lock.json && npm install",
+    "clean:modules:only": "rimraf \"node_modules\" && mkdir \"node_modules\"",
     "test:smoke-prod": "cucumber-js --tags \"@smoke and @prod-ready\" --format $npm_package_config_formatter",
     "test:prod-sanity": "cucumber-js --tags \"@prod-ready and @critical and not (@flaky or @performance or @negative)\" --format $npm_package_config_formatter",
     "test:dev-all": "cucumber-js --tags \"not @prod-ready\" --format $npm_package_config_formatter"
