@@ -15,7 +15,11 @@
     "clean:modules:only": "rimraf \"node_modules\" && mkdir \"node_modules\"",
     "test:smoke-prod": "cucumber-js --tags \"@smoke and @prod-ready\" --format $npm_package_config_formatter",
     "test:prod-sanity": "cucumber-js --tags \"@prod-ready and @critical and not (@flaky or @performance or @negative)\" --format $npm_package_config_formatter",
-    "test:dev-all": "cucumber-js --tags \"not @prod-ready\" --format $npm_package_config_formatter"
+    "test:dev-all": "cucumber-js --tags \"not @prod-ready\" --format $npm_package_config_formatter",
+    "generate:tests": "node dev-tools/code-gen.js",
+    "generate:tests:single": "node dev-tools/code-gen.js --single",
+    "clean:tests": "node dev-tools/code-gen.js --clean",
+    "clean:tests:single": "node dev-tools/code-gen.js --clean-single"
   },
   "dependencies": {
     "@cucumber/cucumber": "^11.2.0",

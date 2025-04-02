@@ -15,6 +15,13 @@ const config = {
   stepDefinitionsDir: './src/step_definitions/' // Step definitions directory
 };
 
+// Parse command line arguments
+const args = process.argv.slice(2);
+const isSingleMode = args.includes('--single');
+const isCleanMode = args.includes('--clean');
+const isCleanSingleMode = args.includes('--clean-single');
+const targetFile = args[args.indexOf('--file') + 1];
+
 // Only check essential directories exist
 const checkDirectories = () => {
   const requiredDirs = [config.swaggerDir, config.templatesDir];
@@ -23,6 +30,34 @@ const checkDirectories = () => {
     if (!fs.existsSync(dir)) {
       console.error(`Required directory ${dir} does not exist. Please create it first.`);
       process.exit(1);
+    }
+  });
+};
+
+// Cleanup function to remove generated files
+const cleanupGeneratedFiles = (tag = null) => {
+  const cleanupDirs = [config.featuresDir, config.stepDefinitionsDir];
+  
+  cleanupDirs.forEach(dir => {
+    if (fs.existsSync(dir)) {
+      if (tag) {
+        // Clean specific tag
+        const tagPath = path.join(dir, tag);
+        if (fs.existsSync(tagPath)) {
+          console.log(`Cleaning up files for tag: ${tag}`);
+          fs.rmSync(tagPath, { recursive: true, force: true });
+        }
+      } else {
+        // Clean all generated files
+        console.log('Cleaning up all generated files');
+        const files = fs.readdirSync(dir);
+        files.forEach(file => {
+          const filePath = path.join(dir, file);
+          if (fs.statSync(filePath).isDirectory()) {
+            fs.rmSync(filePath, { recursive: true, force: true });
+          }
+        });
+      }
     }
   });
 };
@@ -114,6 +149,21 @@ When('{actor} send a {{secondCall.method}} request to "{{secondCall.endpoint}}" 
 const processSwaggerFiles = async () => {
   checkDirectories();
   
+  if (isCleanMode) {
+    cleanupGeneratedFiles();
+    return;
+  }
+  
+  if (isCleanSingleMode) {
+    if (!targetFile) {
+      console.error('Please specify a file with --file parameter');
+      process.exit(1);
+    }
+    const tag = getTagFromFileName(targetFile);
+    cleanupGeneratedFiles(tag);
+    return;
+  }
+  
   const swaggerFiles = fs.readdirSync(config.swaggerDir)
     .filter(file => file.endsWith('.yaml') || file.endsWith('.yml') || file.endsWith('.json'));
   
@@ -122,19 +172,35 @@ const processSwaggerFiles = async () => {
     return;
   }
   
-  const swaggerDocs = swaggerFiles.map(file => ({
-    name: file,
-    content: yaml.load(fs.readFileSync(path.join(config.swaggerDir, file), 'utf8'))
-  }));
-  
-  // Generate individual API tests
-  for (const {name, content} of swaggerDocs) {
-    const tag = getTagFromFileName(name);
-    await generateApiTests(content, tag);
+  if (isSingleMode) {
+    if (!targetFile) {
+      console.error('Please specify a file with --file parameter');
+      process.exit(1);
+    }
+    if (!swaggerFiles.includes(targetFile)) {
+      console.error(`File ${targetFile} not found in ${config.swaggerDir}`);
+      process.exit(1);
+    }
+    const swaggerDoc = {
+      name: targetFile,
+      content: yaml.load(fs.readFileSync(path.join(config.swaggerDir, targetFile), 'utf8'))
+    };
+    await generateApiTests(swaggerDoc.content, getTagFromFileName(targetFile));
+  } else {
+    const swaggerDocs = swaggerFiles.map(file => ({
+      name: file,
+      content: yaml.load(fs.readFileSync(path.join(config.swaggerDir, file), 'utf8'))
+    }));
+    
+    // Generate individual API tests
+    for (const {name, content} of swaggerDocs) {
+      const tag = getTagFromFileName(name);
+      await generateApiTests(content, tag);
+    }
+    
+    // Generate integration tests
+    await generateIntegrationTests(swaggerDocs);
   }
-  
-  // Generate integration tests
-  await generateIntegrationTests(swaggerDocs);
 };
 
 // Helper functions
