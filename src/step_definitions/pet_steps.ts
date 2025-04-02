@@ -16,12 +16,12 @@ const log = {
     debug: (msg: string) => console.log(chalk.gray('[ DEBUG ] ' + msg))
 };
 
-Given('{string} is an authenticated user', function(username: string) {
+Given('{string} is an authenticated user', async (username: string) => {
     const user = UserStore.getUser(username);
     expect(user).toBeDefined();
 });
 
-When('(.*) requests pet details for pet ID {string}', async function(username: string, petId: string) {
+When('(.*) requests pet details for pet ID {string}', async (username: string, petId: string) => {
     const user = UserStore.getUser(username);
     currentResponse = await axios.get(`https://petstore.swagger.io/v2/pet/${petId}`, {
         headers: {
@@ -30,7 +30,7 @@ When('(.*) requests pet details for pet ID {string}', async function(username: s
     });
 });
 
-When('{word} creates a new pet with details:', async function(username: string, petDetails: string) {
+When('{word} creates a new pet with details:', async (username: string, petDetails: string) => {
     const user = UserStore.getUser(username);
     const details = JSON.parse(petDetails);
     
@@ -42,21 +42,29 @@ When('{word} creates a new pet with details:', async function(username: string, 
     });
 });
 
-Then('the response should contain pet details', function() {
+Then('the response should contain pet details', () => {
     expect(currentResponse.data).toBeDefined();
 });
 
 Then('the pet details should partially match:', function(expectedDetails: string) {
     const expected = JSON.parse(expectedDetails);
-    expect(this.comparePartialObject(currentResponse.data, expected)).toBeTruthy();
+    const comparePartialObject = (actual: any, expected: any): boolean => {
+        return Object.keys(expected).every(key => {
+            if (typeof expected[key] === 'object' && expected[key] !== null) {
+                return comparePartialObject(actual[key], expected[key]);
+            }
+            return actual[key] === expected[key];
+        });
+    };
+    expect(comparePartialObject(currentResponse.data, expected)).toBeTruthy();
 });
 
-Given('I want to verify the test setup', function() {
+Given('I want to verify the test setup', () => {
     log.info('Starting test verification...');
     testMessage = '';
 });
 
-When('I run a simple check', async function() {
+When('I run a simple check', async () => {
     log.debug('Running simple check...');
     // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 1000));
@@ -64,20 +72,20 @@ When('I run a simple check', async function() {
     log.success('Check completed');
 });
 
-Then('it should pass with a message {string}', function(expectedMessage: string) {
+Then('it should pass with a message {string}', (expectedMessage: string) => {
     log.debug('Validating test result...');
     expect(testMessage).toBe(expectedMessage);
     log.success(`Test passed with message: ${expectedMessage}`);
 });
 
 // Example of a more complex scenario
-Given('I have the following pet data:', function(dataTable: DataTable) {
+Given('I have the following pet data:', (dataTable: DataTable) => {
     log.info('Processing pet data...');
     const data = dataTable.hashes();
     log.debug(`Received ${data.length} pets`);
 });
 
-When('I create {int} new pets', async function(count: number) {
+When('I create {int} new pets', async (count: number) => {
     log.info(`Creating ${count} new pets...`);
     // Simulate API calls
     for (let i = 1; i <= count; i++) {
